@@ -16,6 +16,6 @@ nethogs -t | while read line; do
    pidstat=$(pidstat -druIh -p $pid -druIh | grep $1)
    kbps_sent=$(awk '{ print $2 }' <<< $line)
    kbps_rec=$(awk '{ print $3 }' <<< $line)
-   disk_used=$(du -s $2 | awk '{ print $1 }')
+   disk_used=$(du -s $2 2> >(grep -v '^du: cannot \(access\|read\)' >&2) | awk '{ print $1 }')
    echo $pidstat $kbps_sent $kbps_rec $disk_used
 done
