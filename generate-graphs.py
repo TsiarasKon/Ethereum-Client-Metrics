@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import psutil
 
+INTERVAL = 60   # in seconds
+
 def convert_bytes(bytes, output_unit, input_unit='b'):
     unit_divisors = {
         'b': 0,
@@ -16,6 +18,7 @@ def convert_bytes(bytes, output_unit, input_unit='b'):
     return bytes / float(1 << divisor)
 
 # TODO: seaborn
+# TODO: y axis values
 def plot_line_graph(col, title, ylabel, xlabel='Time'):
     plt.plot(df[col])
     plt.xlabel(xlabel)
@@ -35,25 +38,27 @@ def plot_2line_graph(col, col2, title, ylabel, xlabel='Time'):
 if len(sys.argv) != 2:
     print("Please run like './generate-graphs.py <results.csv>'")
     sys.exit()
+
 filename = str(sys.argv[1])
 sys_memory = psutil.virtual_memory().total
 
-# Read pidstat output from file
-df = pd.read_csv(filename, delim_whitespace=True)
-# Convert time column to datetime and set as index
-# df['Time'] = pd.to_datetime(df['Time'], format='%H:%M:%S')
-df['Time'] = pd.to_timedelta(df['Time'])    # TODO: fix needed for when day resets
-df.set_index('Time', inplace=True)
+df = pd.read_csv(filename, delim_whitespace=True, usecols=['%CPU', '%MEM', 'kB_rd/s', 'kB_wr/s', 'kbps_sent', 'kbps_rec', 'disk_used'])
+
+# Index df with timedeltas and average rows by INTERVAL
+df['time_strs'] = pd.to_timedelta(df.index, unit="S")
+df = df.groupby(df.index // INTERVAL).mean(numeric_only=False)
+df.set_index('time_strs', inplace=True)
+
+# Convert columns to MB or GB accordingly
 df['%MEM'] *= convert_bytes(sys_memory, "GB") / 100
-df['disk_used'] = df['disk_used'].map(lambda val: convert_bytes(val, "GB", "KB"))
 df['kB_rd/s'] = df['kB_rd/s'].map(lambda val: convert_bytes(val, "MB", "KB"))
 df['kB_wr/s'] = df['kB_wr/s'].map(lambda val: convert_bytes(val, "MB", "KB"))
 df['kbps_sent'] = df['kbps_sent'].map(lambda val: convert_bytes(val, "MB", "KB"))
 df['kbps_rec'] = df['kbps_rec'].map(lambda val: convert_bytes(val, "MB", "KB"))
+df['disk_used'] = df['disk_used'].map(lambda val: convert_bytes(val, "GB", "KB"))
 print(df)
-print(df["disk_used"])
-print(df.columns)
 
+# Plots
 plot_line_graph("%CPU", "CPU usage over time", "CPU Usage (%)")
 plot_line_graph("%MEM", "RAM usage over time", "RAM Usage (GB)")
 plot_line_graph("disk_used", "Disk usage over time", "GB")
