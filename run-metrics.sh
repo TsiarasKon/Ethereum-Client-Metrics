@@ -8,7 +8,7 @@ if [[ $# -lt 2 ]]; then
 fi
 pid=$(ps -a | grep $1 | awk '{ print $1 }')
 # TODO: not all pidstat stats are needed
-echo $(pidstat -druIh | grep "Command") "kbps_sent" "kbps_rec" "disk_used"
+echo $(pidstat -druIh | grep "Command" | cut -c 3-) "kbps_sent" "kbps_rec" "disk_used"
 nethogs -t | while read line; do 
    if ! [[ "$line" == *"$1"* ]]; then
       continue
