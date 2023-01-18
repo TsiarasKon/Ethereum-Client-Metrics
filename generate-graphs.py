@@ -5,18 +5,21 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import seaborn as sns
 
+ROW_CUTOFF = None  # if not None, use df[:ROW_CUTOFF] for everything
 INTERVAL = 60   # in seconds
-TIME_LABEL = "Time (hours:minutes)"
-TIME_TICKS_STEP = 150
-
-# Hard-coded events (based on clients' log outputs), to be marked with vertical lines in plots
-events = {
+TIME_TICKS_STEP = 60
+# Hard-coded events (based on clients' log outputs), to be marked with vertical lines in plots:
+EVENTS = {
     'Geth': {
     },
     'Nethermind': {
-        'Beacon headers sync ()': dict({ 'x': 5000, 'color': 'yellow', 'linestyle':'-' }),
-        'Sync competed ()': dict({ 'x': 20000, 'color': 'gray', 'linestyle':':' }),
-    }
+        # 'Beacon headers sync (time)': dict({ 'x': 4000, 'color': 'm', 'linestyle':':' }),
+        'Sync competed (time)': dict({ 'x': 18000, 'color': 'gray', 'linestyle':'-' }),
+    },
+    'Besu': {
+    },
+    'Erigon': {
+    },
 }
 
 def convert_bytes(bytes, output_unit, input_unit='b'):
@@ -39,32 +42,27 @@ def seconds_formatter(seconds, pos=None):    # TODO: just hours?
     # return f'{h:02d}:{m:02d}:{s:02d}'
     return f'{h:02d}:{m:02d}'
 
-def plot_line_graph(col, title, ylabel, xlabel=TIME_LABEL):
+def plot_lines(cols, title, ylabel, xlabel="Time (hours:minutes)"):
     fig, ax = plt.subplots(constrained_layout=True)
     ax.xaxis.set_major_formatter(seconds_formatter)
-    ax.plot(df.index, df[col], label='_nolegend_')
+    if len(cols) > 1:
+        for col in cols:
+            ax.plot(df.index, df[col])
+    else:
+        ax.plot(df.index, df[cols[0]], label='_nolegend_')
     ax.set_xticks([sec for sec in df.index[::TIME_TICKS_STEP]])
-    ax.set_title(title)
-    plt.grid('on', linestyle='--')
-    # plt.xticks(rotation=45)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    for event, val_dict in events[client].items():
+    for event, val_dict in EVENTS[client].items():
         plt.axvline(label=event, **val_dict)
-    plt.legend([*events[client].keys()])
-    plt.show()
 
-def plot_2line_graph(col, col2, title, ylabel, xlabel=TIME_LABEL):
-    # TODO: refactor
-    plt.plot(df[col])
-    plt.plot(df[col2])
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
     plt.title(title)
-    plt.legend([col, col2])
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    # plt.xticks(rotation=45)
+    plt.legend([*cols, *EVENTS[client].keys()] if len(cols) > 1 else [*EVENTS[client].keys()])
+    plt.grid('on', linestyle='--')
     plt.show()
 
-if len(sys.argv) != 3 or str(sys.argv[1]) not in events.keys():
+if len(sys.argv) != 3 or str(sys.argv[1]) not in EVENTS.keys():
     print("Please run like './generate-graphs.py <Geth|Nethermind|Besu|Erigon> <results.csv>'")
     sys.exit()
 
@@ -73,7 +71,11 @@ filename = str(sys.argv[2])
 sys_memory = psutil.virtual_memory().total
 sns.set()
 
+# Read csv and prune it if ROW_CUTOFF defined 
 df = pd.read_csv(filename, delim_whitespace=True, usecols=['%CPU', '%MEM', 'kB_rd/s', 'kB_wr/s', 'kbps_sent', 'kbps_rec', 'disk_used'])
+if ROW_CUTOFF is not None:
+    df = df[:ROW_CUTOFF]
+
 # Index df with timedeltas and average rows by INTERVAL
 df['seconds_delta'] = pd.to_timedelta(df.index, unit="S").total_seconds()
 df = df.groupby(df.index // INTERVAL).mean(numeric_only=False)
@@ -89,8 +91,8 @@ df['disk_used'] = df['disk_used'].map(lambda val: convert_bytes(val, "GB", "KB")
 print(df)
 
 # Plots
-plot_line_graph("%CPU", "CPU usage over time", "CPU Usage (%)")
-plot_line_graph("%MEM", "RAM usage over time", "RAM Usage (GB)")
-plot_line_graph("disk_used", "Disk usage over time", "GB")
-plot_2line_graph("Reads", "Writes", "Disk I/O over time", "MBps")
-plot_2line_graph("Sent", "Received", "Network traffic over time", "MBps")
+plot_lines(["%CPU"], "CPU usage over time", "%")
+plot_lines(["%MEM"], "RAM usage over time", "GB")
+plot_lines(["disk_used"], "Chain data disk size over time", "GB")
+plot_lines(["Reads", "Writes"], "Disk I/O over time", "MB per second")
+plot_lines(["Sent", "Received"], "Network traffic over time", "MB per second")
