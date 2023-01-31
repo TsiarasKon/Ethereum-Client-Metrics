@@ -36,29 +36,6 @@ def convert_bytes(bytes, output_unit, input_unit='b'):
     return bytes / float(1 << divisor)
 
 
-# def plot_lines(cols, title, ylabel):
-#     fig, ax = plt.subplots(constrained_layout=True)
-#     ax.xaxis.set_major_formatter(TIME_FORMATTER)
-#     if len(cols) > 1:
-#         for col in cols:
-#             ax.plot(df.index, df[col])
-#     else:
-#         ax.plot(df.index, df[cols[0]], label='_nolegend_')
-#     ax.set_xticks([sec for sec in df.index[::TIME_TICKS_STEP]])
-#     for event, val_dict in EVENTS[client].items():
-#         plt.axvline(label=event, **val_dict)
-
-#     plt.title(title)
-#     plt.ylabel(ylabel)
-#     plt.xlabel(TIME_LABEL)
-#     # plt.xticks(rotation=45)
-#     plt.legend([*cols, *EVENTS[client].keys()] if len(cols)
-#                > 1 else [*EVENTS[client].keys()])
-#     plt.grid('on', linestyle='--')
-#     plt.savefig(cols[0])
-#     plt.show()
-
-
 def plot_col_multidf(config, df_list, col, title, ylabel):
     longest_df = max(df_list, key=lambda x: len(x))
     fig, ax = plt.subplots(constrained_layout=True)
@@ -74,15 +51,16 @@ def plot_col_multidf(config, df_list, col, title, ylabel):
     plt.xlabel("Time (hours)")
     plt.legend(list(map(lambda run: run['name'], config['runs'])))
     plt.grid('on', linestyle='--')
-    # plt.savefig('fig')
-    plt.show()
+    # plt.savefig(f"{client}_{col}.png")
+    plt.savefig(f"{col}.png")
+    # plt.show()
 
 
 def load_df(run_config, sys_memory):
     df = pd.read_csv(run_config['filename'], delim_whitespace=True, usecols=[
                      '%CPU', '%MEM', 'kB_rd/s', 'kB_wr/s', 'kbps_sent', 'kbps_rec', 'disk_used'])
-    if run_config['row_cutoff'] is not None:
-        df = df[:run_config['row_cutoff']]
+    if run_config['trim_rows'] is not None:
+        df = df[:-run_config['trim_rows']]
 
     # Index df with timedeltas and average rows by INTERVAL
     df['seconds_delta'] = pd.to_timedelta(df.index, unit="S").total_seconds()
@@ -98,22 +76,23 @@ def load_df(run_config, sys_memory):
         lambda val: convert_bytes(val, "MB", "KB"))
     df['Received'] = df['kbps_rec'].map(
         lambda val: convert_bytes(val, "MB", "KB"))
-    df['disk_used'] = df['disk_used'].map(
+    df['Disk'] = df['disk_used'].map(
         lambda val: convert_bytes(val, "GB", "KB"))
+    df.rename(columns={'%CPU': 'CPU'}, inplace=True)
     return df
 
 
-ROW_CUTOFF = None  # if not None, use df[:ROW_CUTOFF] for everything
-INTERVAL = 60   # in seconds
+INTERVAL = 120   # in seconds
 ROOT_DIR = './csv/'
 
 # Hard-coded events (based on clients' log outputs in ROOT_DIR)
 CONFIGS = {
     'Geth': {
+        'time_ticks_step': 90,
         'runs': [{
             'name': 'Geth_1',
-            'filename': ROOT_DIR + 'metrics_20_01_geth.csv',
-            'row_cutoff': 90000,
+            'filename': ROOT_DIR + 'metrics_24_01_geth_128_def.csv',
+            'trim_rows': None,
             'events': {
                 # 22:16:47
                 'Began state heal (22:21)': dict({'x': 80469, 'color': 'green', 'linestyle': ':'}),
@@ -122,38 +101,73 @@ CONFIGS = {
             }
         }, {
             'name': 'Geth_2',
-            'filename': ROOT_DIR + 'metrics_24_01_geth_128_def.csv',
-            'row_cutoff': None,
+            'filename': ROOT_DIR + 'metrics_20_01_geth.csv',
+            'trim_rows': 22000,
             'events': {
                 # 22:16:47
                 'Began state heal (22:21)': dict({'x': 80469, 'color': 'green', 'linestyle': ':'}),
                 # 22:36:53
                 'Sync competed (22:41)': dict({'x': 81625, 'color': 'gray', 'linestyle': '-'})
             }
-        }],
-        'time_ticks_step': 180,
+        }]
     },
     'Nethermind': {
-        'time_ticks_step': 60,
+        'time_ticks_step': 120,
+        'runs': [{
+            'name': 'Nethermind_1',
+            'filename': ROOT_DIR + 'metrics_23_01_nethermind_snap_128_4096.csv',
+            'trim_rows': 10800,
+            'events': {}
+        }, {
+            'name': 'Nethermind_2',
+            'filename': ROOT_DIR + 'metrics_28_01_nethermind_fast_128_4096.csv',
+            'trim_rows': 7200,
+            'events': {}
+        }]
     },
     'Besu': {
-        'time_ticks_step': 180,
+        'time_ticks_step': 60,
+        'runs': [{
+            'name': 'Besu_1',
+            'filename': ROOT_DIR + 'metrics_18_01_besu.csv',
+            'trim_rows': 8000,
+            'events': {}
+        }, {
+            'name': 'Besu_2',
+            'filename': ROOT_DIR + 'metrics_21_01_besu_checkpoint.csv',
+            'trim_rows': 20000,
+            'events': {}
+        }, {
+            'name': 'Besu_3',
+            'filename': ROOT_DIR + 'metrics_29_01_besu_snap_noBonsai.csv',
+            'trim_rows': 2500,
+            'events': {}
+        }, {
+            'name': 'Besu_4',
+            'filename': ROOT_DIR + 'metrics_25_01_besu_noBonsai.csv',
+            'trim_rows': 65000,
+            'events': {}
+        }]
     },
     'Erigon': {
-        'time_ticks_step': 60,
+        'time_ticks_step': 240,
     },
 }
 CONFIG_ALL = {
-    'runs': [CONFIGS['Geth']['runs'][0]],
-    'TIME_TICKS_STEP': 60,
+    'time_ticks_step': 120,
+    'runs': [
+        CONFIGS['Geth']['runs'][1],
+        CONFIGS['Nethermind']['runs'][0],
+        CONFIGS['Besu']['runs'][3]
+    ]
 }
 
-if len(sys.argv) != 2 or str(sys.argv[1]) not in [*CONFIGS.keys(), '*']:
-    print("Please run like './generate-thesis-config.py <Geth|Nethermind|Besu|Erigon|*>'")
+if len(sys.argv) != 2 or str(sys.argv[1]) not in [*CONFIGS.keys(), 'ALL']:
+    print("Please run like './generate-thesis-config.py <Geth|Nethermind|Besu|Erigon|ALL>'")
     sys.exit()
 
 client = str(sys.argv[1])
-config = CONFIG_ALL if client == '*' else CONFIGS[client]
+config = CONFIG_ALL if client == "ALL" else CONFIGS[client]
 sys_memory = psutil.virtual_memory().total
 sns.set()
 
@@ -161,8 +175,10 @@ df_list = list(map(lambda run: load_df(run, sys_memory), config['runs']))
 # print(df_list)
 
 # Plots
-plot_col_multidf(config, df_list, '%CPU', "CPU usage over time", "%")
-# plot_lines(["MEM"], "RAM usage over time", "GB")
-# plot_lines(["disk_used"], "Chain data disk size over time", "GB")
-# plot_lines(["Reads", "Writes"], "Disk I/O over time", "MB per second")
-# plot_lines(["Sent", "Received"], "Network traffic over time", "MB per second")
+plot_col_multidf(config, df_list, 'CPU', "CPU usage over time", "%")
+plot_col_multidf(config, df_list, 'MEM', "RAM usage over time", "GB")
+plot_col_multidf(config, df_list, 'Disk', "Chain data disk size over time", "GB")
+plot_col_multidf(config, df_list, 'Reads', "Disk Reads over time", "MB per second")
+plot_col_multidf(config, df_list, 'Writes', "Disk Writes over time", "MB per second")
+plot_col_multidf(config, df_list, 'Sent', "Network - Sent data over time", "MB per second")
+plot_col_multidf(config, df_list, 'Received', "Network - Received data over time", "MB per second")
