@@ -59,27 +59,23 @@ def convert_bytes(bytes, output_unit, input_unit='b'):
 #     plt.show()
 
 
-def plot_col_multidf(dfs, col, title, ylabel):
-    return None
-    # fig, ax = plt.subplots(constrained_layout=True)
-    # ax.xaxis.set_major_formatter(hours_formatter)
-    # if len(cols) > 1:
-    #     for col in cols:
-    #         ax.plot(df.index, df[col])
-    # else:
-    #     ax.plot(df.index, df[cols[0]], label='_nolegend_')
-    # ax.set_xticks([sec for sec in df.index[::TIME_TICKS_STEP]])
-    # for event, val_dict in EVENTS[client].items():
+def plot_col_multidf(config, df_list, col, title, ylabel):
+    longest_df = max(df_list, key=lambda x: len(x))
+    fig, ax = plt.subplots(constrained_layout=True)
+    ax.xaxis.set_major_formatter(hours_formatter)
+    for df in df_list:
+        ax.plot(df.index, df[col])
+    ax.set_xticks([sec for sec in longest_df.index[::config['time_ticks_step']]])
+    # for event, val_dict in client.items():
     #     plt.axvline(label=event, **val_dict)
 
-    # plt.title(title)
-    # plt.ylabel(ylabel)
-    # plt.xlabel("Time (hours)")
-    # # plt.xticks(rotation=45)
-    # plt.legend([*cols, *EVENTS[client].keys()] if len(cols) > 1 else [*EVENTS[client].keys()])
-    # plt.grid('on', linestyle='--')
-    # plt.savefig(cols[0])
-    # plt.show()
+    plt.title(title)
+    plt.ylabel(ylabel)
+    plt.xlabel("Time (hours)")
+    plt.legend(list(map(lambda run: run['name'], config['runs'])))
+    plt.grid('on', linestyle='--')
+    # plt.savefig('fig')
+    plt.show()
 
 
 def load_df(run_config, sys_memory):
@@ -115,8 +111,9 @@ ROOT_DIR = './csv/'
 CONFIGS = {
     'Geth': {
         'runs': [{
+            'name': 'Geth_1',
             'filename': ROOT_DIR + 'metrics_20_01_geth.csv',
-            'row_cutoff': None,
+            'row_cutoff': 90000,
             'events': {
                 # 22:16:47
                 'Began state heal (22:21)': dict({'x': 80469, 'color': 'green', 'linestyle': ':'}),
@@ -124,6 +121,7 @@ CONFIGS = {
                 'Sync competed (22:41)': dict({'x': 81625, 'color': 'gray', 'linestyle': '-'})
             }
         }, {
+            'name': 'Geth_2',
             'filename': ROOT_DIR + 'metrics_24_01_geth_128_def.csv',
             'row_cutoff': None,
             'events': {
@@ -133,16 +131,16 @@ CONFIGS = {
                 'Sync competed (22:41)': dict({'x': 81625, 'color': 'gray', 'linestyle': '-'})
             }
         }],
-        'TIME_TICKS_STEP': 180,
+        'time_ticks_step': 180,
     },
     'Nethermind': {
-        'TIME_TICKS_STEP': 60,
+        'time_ticks_step': 60,
     },
     'Besu': {
-        'TIME_TICKS_STEP': 180,
+        'time_ticks_step': 180,
     },
     'Erigon': {
-        'TIME_TICKS_STEP': 60,
+        'time_ticks_step': 60,
     },
 }
 CONFIG_ALL = {
@@ -160,10 +158,10 @@ sys_memory = psutil.virtual_memory().total
 sns.set()
 
 df_list = list(map(lambda run: load_df(run, sys_memory), config['runs']))
-print(df_list)
+# print(df_list)
 
 # Plots
-# plot_lines(["%CPU"], "CPU usage over time", "%")
+plot_col_multidf(config, df_list, '%CPU', "CPU usage over time", "%")
 # plot_lines(["MEM"], "RAM usage over time", "GB")
 # plot_lines(["disk_used"], "Chain data disk size over time", "GB")
 # plot_lines(["Reads", "Writes"], "Disk I/O over time", "MB per second")
