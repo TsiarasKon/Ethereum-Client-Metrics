@@ -40,17 +40,21 @@ def plot_col_multidf(config, df_list, col, title, ylabel):
     longest_df = max(df_list, key=lambda x: len(x))
     fig, ax = plt.subplots(constrained_layout=True)
     ax.xaxis.set_major_formatter(hours_formatter)
-    for df in df_list:
-        ax.plot(df.index, df[col])
-    ax.set_xticks([sec for sec in longest_df.index[::config['time_ticks_step']]])
-    # for event, val_dict in client.items():
-    #     plt.axvline(label=event, **val_dict)
+    ax.set_xticks(
+        [sec for sec in longest_df.index[::config['time_ticks_step']]])
+    for run, df in zip(config['runs'], df_list):
+        ax.plot(df.index, df[col], label=run['name'], zorder=5)
+        for event in run['events']:
+            x_index = event['x'] // INTERVAL
+            marker_label = event['name'] if run == config['runs'][-1] else "_nolegend_"
+            ax.scatter(df.index[x_index], df.iloc[x_index][col], marker=event['marker'],
+                       color=event['color'], s=event['size'], label=marker_label, zorder=10)
 
     plt.title(title)
     plt.ylabel(ylabel)
     plt.xlabel("Time (hours)")
-    plt.legend(list(map(lambda run: run['name'], config['runs'])))
     plt.grid('on', linestyle='--')
+    plt.legend()
     # plt.savefig(f"{client}_{col}.png")
     plt.savefig(f"{col}.png")
     # plt.show()
@@ -93,22 +97,44 @@ CONFIGS = {
             'name': 'Geth_1',
             'filename': ROOT_DIR + 'metrics_24_01_geth_128_def.csv',
             'trim_rows': None,
-            'events': {
-                # 22:16:47
-                'Began state heal (22:21)': dict({'x': 80469, 'color': 'green', 'linestyle': ':'}),
-                # 22:36:53
-                'Sync competed (22:41)': dict({'x': 81625, 'color': 'gray', 'linestyle': '-'})
-            }
+            'events': [{
+                'name': 'Began state heal',
+                'time': '22:16:47',
+                'delta_time': '22:21',
+                'x': 80469,
+                'marker': 'x',
+                'color': 'green',
+                'size': 50
+            }, {
+                'name': 'Sync competed',
+                'time': '22:36:53',
+                'delta_time': '22:41',
+                'x': 81625,
+                'marker': '|',
+                'color': 'black',
+                'size': 50
+            }]
         }, {
             'name': 'Geth_2',
             'filename': ROOT_DIR + 'metrics_20_01_geth.csv',
             'trim_rows': 22000,
-            'events': {
-                # 22:16:47
-                'Began state heal (22:21)': dict({'x': 80469, 'color': 'green', 'linestyle': ':'}),
-                # 22:36:53
-                'Sync competed (22:41)': dict({'x': 81625, 'color': 'gray', 'linestyle': '-'})
-            }
+            'events': [{
+                'name': 'Began state heal',
+                'time': '22:16:47',
+                'delta_time': '22:21',
+                'x': 70469,
+                'marker': 'x',
+                'color': 'green',
+                'size': 80
+            }, {
+                'name': 'Sync competed',
+                'time': '22:36:53',
+                'delta_time': '22:41',
+                'x': 71625,
+                'marker': '|',
+                'color': 'black',
+                'size': 100
+            }]
         }]
     },
     'Nethermind': {
@@ -169,16 +195,19 @@ if len(sys.argv) != 2 or str(sys.argv[1]) not in [*CONFIGS.keys(), 'ALL']:
 client = str(sys.argv[1])
 config = CONFIG_ALL if client == "ALL" else CONFIGS[client]
 sys_memory = psutil.virtual_memory().total
-sns.set()
-
 df_list = list(map(lambda run: load_df(run, sys_memory), config['runs']))
-# print(df_list)
 
 # Plots
+sns.set()
 plot_col_multidf(config, df_list, 'CPU', "CPU usage over time", "%")
 plot_col_multidf(config, df_list, 'MEM', "RAM usage over time", "GB")
-plot_col_multidf(config, df_list, 'Disk', "Chain data disk size over time", "GB")
-plot_col_multidf(config, df_list, 'Reads', "Disk Reads over time", "MB per second")
-plot_col_multidf(config, df_list, 'Writes', "Disk Writes over time", "MB per second")
-plot_col_multidf(config, df_list, 'Sent', "Network - Sent data over time", "MB per second")
-plot_col_multidf(config, df_list, 'Received', "Network - Received data over time", "MB per second")
+plot_col_multidf(config, df_list, 'Disk',
+                 "Chain data disk size over time", "GB")
+plot_col_multidf(config, df_list, 'Reads',
+                 "Disk Reads over time", "MB per second")
+plot_col_multidf(config, df_list, 'Writes',
+                 "Disk Writes over time", "MB per second")
+plot_col_multidf(config, df_list, 'Sent',
+                 "Network - Sent data over time", "MB per second")
+plot_col_multidf(config, df_list, 'Received',
+                 "Network - Received data over time", "MB per second")
