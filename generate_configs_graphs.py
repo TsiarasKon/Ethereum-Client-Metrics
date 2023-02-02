@@ -4,7 +4,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import seaborn as sns
+from thesis_configs import CONFIGS, CONFIG_ALL
 
+INTERVAL = 120   # in seconds
+ROOT_DIR = './csv/'
 
 @mticker.FuncFormatter
 def hhmm_formatter(seconds, pos=None):
@@ -46,9 +49,10 @@ def plot_col_multidf(config, df_list, col, title, ylabel):
         ax.plot(df.index, df[col], label=run['name'], zorder=5)
         for event in run['events']:
             x_index = event['x'] // INTERVAL
-            marker_label = event['name'] if run == config['runs'][-1] else "_nolegend_"
-            ax.scatter(df.index[x_index], df.iloc[x_index][col], marker=event['marker'],
-                       color=event['color'], s=event['size'], label=marker_label, zorder=10)
+            marker_label = event['config']['name'] if run == config['runs'][-1] else "_nolegend_"
+            # TODO: labels if client == ALL?
+            ax.scatter(df.index[x_index], df.iloc[x_index][col], marker=event['config']['marker'],
+                       color=event['config']['color'], s=event['config']['size'], label=marker_label, zorder=10)
 
     plt.title(title)
     plt.ylabel(ylabel)
@@ -61,7 +65,7 @@ def plot_col_multidf(config, df_list, col, title, ylabel):
 
 
 def load_df(run_config, sys_memory):
-    df = pd.read_csv(run_config['filename'], delim_whitespace=True, usecols=[
+    df = pd.read_csv(ROOT_DIR + run_config['filename'], delim_whitespace=True, usecols=[
                      '%CPU', '%MEM', 'kB_rd/s', 'kB_wr/s', 'kbps_sent', 'kbps_rec', 'disk_used'])
     if run_config['trim_rows'] is not None:
         df = df[:-run_config['trim_rows']]
@@ -86,108 +90,6 @@ def load_df(run_config, sys_memory):
     return df
 
 
-INTERVAL = 120   # in seconds
-ROOT_DIR = './csv/'
-
-# Hard-coded events (based on clients' log outputs in ROOT_DIR)
-CONFIGS = {
-    'Geth': {
-        'time_ticks_step': 90,
-        'runs': [{
-            'name': 'Geth_1',
-            'filename': ROOT_DIR + 'metrics_24_01_geth_128_def.csv',
-            'trim_rows': None,
-            'events': [{
-                'name': 'Began state heal',
-                'time': '22:16:47',
-                'delta_time': '22:21',
-                'x': 80469,
-                'marker': 'x',
-                'color': 'green',
-                'size': 50
-            }, {
-                'name': 'Sync competed',
-                'time': '22:36:53',
-                'delta_time': '22:41',
-                'x': 81625,
-                'marker': '|',
-                'color': 'black',
-                'size': 50
-            }]
-        }, {
-            'name': 'Geth_2',
-            'filename': ROOT_DIR + 'metrics_20_01_geth.csv',
-            'trim_rows': 22000,
-            'events': [{
-                'name': 'Began state heal',
-                'time': '22:16:47',
-                'delta_time': '22:21',
-                'x': 70469,
-                'marker': 'x',
-                'color': 'green',
-                'size': 80
-            }, {
-                'name': 'Sync competed',
-                'time': '22:36:53',
-                'delta_time': '22:41',
-                'x': 71625,
-                'marker': '|',
-                'color': 'black',
-                'size': 100
-            }]
-        }]
-    },
-    'Nethermind': {
-        'time_ticks_step': 120,
-        'runs': [{
-            'name': 'Nethermind_1',
-            'filename': ROOT_DIR + 'metrics_23_01_nethermind_snap_128_4096.csv',
-            'trim_rows': 10800,
-            'events': {}
-        }, {
-            'name': 'Nethermind_2',
-            'filename': ROOT_DIR + 'metrics_28_01_nethermind_fast_128_4096.csv',
-            'trim_rows': 7200,
-            'events': {}
-        }]
-    },
-    'Besu': {
-        'time_ticks_step': 60,
-        'runs': [{
-            'name': 'Besu_1',
-            'filename': ROOT_DIR + 'metrics_18_01_besu.csv',
-            'trim_rows': 8000,
-            'events': {}
-        }, {
-            'name': 'Besu_2',
-            'filename': ROOT_DIR + 'metrics_21_01_besu_checkpoint.csv',
-            'trim_rows': 20000,
-            'events': {}
-        }, {
-            'name': 'Besu_3',
-            'filename': ROOT_DIR + 'metrics_29_01_besu_snap_noBonsai.csv',
-            'trim_rows': 2500,
-            'events': {}
-        }, {
-            'name': 'Besu_4',
-            'filename': ROOT_DIR + 'metrics_25_01_besu_noBonsai.csv',
-            'trim_rows': 65000,
-            'events': {}
-        }]
-    },
-    'Erigon': {
-        'time_ticks_step': 240,
-    },
-}
-CONFIG_ALL = {
-    'time_ticks_step': 120,
-    'runs': [
-        CONFIGS['Geth']['runs'][1],
-        CONFIGS['Nethermind']['runs'][0],
-        CONFIGS['Besu']['runs'][3]
-    ]
-}
-
 if len(sys.argv) != 2 or str(sys.argv[1]) not in [*CONFIGS.keys(), 'ALL']:
     print("Please run like './generate-thesis-config.py <Geth|Nethermind|Besu|Erigon|ALL>'")
     sys.exit()
@@ -198,7 +100,7 @@ sys_memory = psutil.virtual_memory().total
 df_list = list(map(lambda run: load_df(run, sys_memory), config['runs']))
 
 # Plots
-sns.set()
+sns.set()   # TODO - keep?
 plot_col_multidf(config, df_list, 'CPU', "CPU usage over time", "%")
 plot_col_multidf(config, df_list, 'MEM', "RAM usage over time", "GB")
 plot_col_multidf(config, df_list, 'Disk',
