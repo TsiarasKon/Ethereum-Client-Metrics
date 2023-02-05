@@ -100,7 +100,7 @@ sys_memory = psutil.virtual_memory().total
 df_list = list(map(lambda run: load_df(run, sys_memory), config['runs']))
 
 # Plots
-sns.set()   # TODO - keep?
+# sns.set()   # TODO - keep?
 plot_col_multidf(config, df_list, 'CPU', "CPU usage over time", "%")
 plot_col_multidf(config, df_list, 'MEM', "RAM usage over time", "GB")
 plot_col_multidf(config, df_list, 'Disk',

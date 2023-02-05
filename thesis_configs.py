@@ -115,19 +115,19 @@ CONFIGS = {
             'events': [{
                 'config': EVENT_CONFIGS['Geth']['HeaderSync'],
                 'time': '11:29:26',
-                'x': 0,
+                'x': 1007,
             }, {
                 'config': EVENT_CONFIGS['Geth']['BlocksDownloaded'],
                 'time': '00:01:10',
-                'x': 0,
+                'x': 46111,
             }, {
                 'config': EVENT_CONFIGS['Geth']['StateSync'],
                 'time': '08:57:54',
-                'x': 0,
+                'x': 77737,
             }, {
                 'config': EVENT_CONFIGS['Geth']['StateHeal'],
                 'time': '09:18:52',
-                'x': 0,
+                'x': 78110,
             }]
         }, {
             'name': 'Geth_2',
@@ -136,19 +136,19 @@ CONFIGS = {
             'events': [{
                 'config': EVENT_CONFIGS['Geth']['HeaderSync'],
                 'time': '01:00:11',
-                'x': 0,
+                'x': 1030,
             }, {
                 'config': EVENT_CONFIGS['Geth']['BlocksDownloaded'],
                 'time': '13:26:07',
-                'x': 0,
+                'x': 45786,
             }, {
                 'config': EVENT_CONFIGS['Geth']['StateSync'],
                 'time': '20:08:24',
-                'x': 0,
+                'x': 69869,
             }, {
                 'config': EVENT_CONFIGS['Geth']['StateHeal'],
                 'time': '20:26:35',
-                'x': 0,
+                'x': 69976,
             }]
         }]
     },
@@ -161,19 +161,19 @@ CONFIGS = {
             'events': [{
                 'config': EVENT_CONFIGS['Nethermind']['HeaderSync'],
                 'time': '14:49:36',
-                'x': 0,
+                'x': 1605,
             }, {
                 'config': EVENT_CONFIGS['Nethermind']['StateSync'],
                 'time': '16:59:08',
-                'x': 0,
+                'x': 9286,
             }, {
                 'config': EVENT_CONFIGS['Nethermind']['BlocksDownloaded'],
                 'time': '22:49:23',
-                'x': 0,
+                'x': 30301,
             }, {
                 'config': EVENT_CONFIGS['Nethermind']['ReceiptsDownloaded'],
                 'time': '02:20:01',
-                'x': 0,
+                'x': 42939,
             }]
         }, {
             'name': 'Nethermind_2',
@@ -182,19 +182,19 @@ CONFIGS = {
             'events': [{
                 'config': EVENT_CONFIGS['Nethermind']['HeaderSync'],
                 'time': '01-28 01:38:05',
-                'x': 0,
+                'x': 3982,
             }, {
-                'config': EVENT_CONFIGS['Nethermind']['ReceiptsDownloaded'],
+                'config': EVENT_CONFIGS['Nethermind']['StateSync'],
                 'time': '01-28 20:29:53',
-                'x': 0,
+                'x': 71890,
             }, {
                 'config': EVENT_CONFIGS['Nethermind']['BlocksDownloaded'],
                 'time': '01-29 02:39:09',
-                'x': 0,
+                'x': 94046,
             }, {
                 'config': EVENT_CONFIGS['Nethermind']['ReceiptsDownloaded'],
                 'time': '01-29 08:38:20',
-                'x': 0,
+                'x': 115594,
             }]
         }]
     },
@@ -207,15 +207,15 @@ CONFIGS = {
             'events': [{
                 'config': EVENT_CONFIGS['Besu']['StateSync'],
                 'time': '01-18 07:59:27',
-                'x': 0,
+                'x': 27465,
             }, {
                 'config': EVENT_CONFIGS['Besu']['BlocksDownloaded'],
                 'time': '01-19 07:58:25',
-                'x': 0,
+                'x': 113798,
             }, {
                 'config': EVENT_CONFIGS['Besu']['StateHeal'],
                 'time': '01-19 08:01:13',
-                'x': 0,
+                'x': 113966,
             }]
         }, {
             'name': 'Besu_2',
@@ -224,15 +224,15 @@ CONFIGS = {
             'events': [{
                 'config': EVENT_CONFIGS['Besu']['StateSync'],
                 'time': '01-21 18:59:04',
-                'x': 0,
+                'x': 30186,
             }, {
                 'config': EVENT_CONFIGS['Besu']['BlocksDownloaded'],
                 'time': '01-22 10:57:06',
-                'x': 0,
+                'x': 87668,
             }, {
                 'config': EVENT_CONFIGS['Besu']['StateHeal'],
                 'time': '01-21 20:06:45',
-                'x': 0,
+                'x': 34247,
             }]
         # }, {
         #     'name': 'Besu_3',
@@ -255,23 +255,23 @@ CONFIGS = {
             'events': [{
                 'config': EVENT_CONFIGS['Erigon']['1'],
                 'time': '01-31 11:06:43',
-                'x': 0,
+                'x': 43197,
             }, {
                 'config': EVENT_CONFIGS['Erigon']['7'],
                 'time': '02-04 05:17:08',
-                'x': 0,
+                'x': 367581,
             }, {
                 'config': EVENT_CONFIGS['Erigon']['8'],
                 'time': '02-04 06:49:55',
-                'x': 0,
+                'x': 373147,
             }, {
                 'config': EVENT_CONFIGS['Erigon']['9'],
                 'time': '02-04 07:36:32',
-                'x': 0,
+                'x': 375944,
             }, {
                 'config': EVENT_CONFIGS['Erigon']['13'],
                 'time': '02-04 11:19:02',
-                'x': 0,
+                'x': 389292,
             }]
         }]
     },
