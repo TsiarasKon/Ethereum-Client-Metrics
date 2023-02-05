@@ -4,25 +4,25 @@ EVENT_CONFIGS = {
         'HeaderSync': {
             'name': 'Headers chain synced',
             'marker': '^',
-            'color': 'darkgreen',
+            'color': 'forestgreen',
             'size': 50
         },
         'BlocksDownloaded': {
             'name': 'Blocks downloaded',
             'marker': 'v',
-            'color': 'lightgreen',
+            'color': 'aquamarine',
             'size': 50
         },
         'StateSync': {
             'name': 'State sync completed',
-            'marker': 'x',
-            'color': 'blue',
+            'marker': 's',
+            'color': 'blueviolet',
             'size': 50
         },
         'StateHeal': {
             'name': 'State heal competed',
             'marker': '*',
-            'color': 'red',
+            'color': 'crimson',
             'size': 100
         }
     },
@@ -30,26 +30,26 @@ EVENT_CONFIGS = {
         'HeaderSync': {
             'name': 'Headers chain synced',
             'marker': '^',
-            'color': 'darkgreen',
+            'color': 'forestgreen',
             'size': 50
         },
         'StateSync': {
             'name': 'State sync completed',
-            'marker': 'x',
-            'color': 'blue',
+            'marker': 's',
+            'color': 'blueviolet',
             'size': 50
         },
         'BlocksDownloaded': {
             'name': 'Blocks bodies downloaded',
             'marker': 'v',
-            'color': 'lightgreen',
+            'color': 'aquamarine',
             'size': 50
         },
         'ReceiptsDownloaded': {
             'name': 'Receipts bodies downloaded',
-            'marker': '*',
-            'color': 'red',
-            'size': 100
+            'marker': '>',
+            'color': 'crimson',
+            'size': 50
         }
     },
     'Besu': {
@@ -110,7 +110,7 @@ CONFIGS = {
         'time_ticks_step': 90,
         'runs': [{
             'name': 'Geth_1',
-            'filename': 'metrics_24_01_geth_128_def.csv',
+            'filename': 'p_metrics_24_01_geth_128_def.csv',
             'trim_rows': None,
             'events': [{
                 'config': EVENT_CONFIGS['Geth']['HeaderSync'],
@@ -131,7 +131,7 @@ CONFIGS = {
             }]
         }, {
             'name': 'Geth_2',
-            'filename': 'metrics_20_01_geth_128_16384.csv',
+            'filename': 'p_metrics_20_01_geth_128_16384.csv',
             'trim_rows': 22000,
             'events': [{
                 'config': EVENT_CONFIGS['Geth']['HeaderSync'],
