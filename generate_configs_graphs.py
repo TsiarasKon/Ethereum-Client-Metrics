@@ -21,39 +21,32 @@ def hours_formatter(seconds, pos=None):
 def plot_col_multidf(config, df_list, col, title, ylabel, client):
     longest_df = max(df_list, key=lambda x: len(x))
     fig, ax = plt.subplots(constrained_layout=True)
-    fig.set_size_inches(7, 5.25)
+    fig.set_size_inches(7.5, 5.25)
     fig.set_dpi(100)
     ax.xaxis.set_major_formatter(hours_formatter)
     ax.set_xticks(
         [sec for sec in longest_df.index[::config['time_ticks_step']]])
-    events_set = []     # used only if client == 'ALL'
     for run, df in zip(config['runs'], df_list):
         ax.plot(df.index, df[col], label=run['name'], zorder=5)
         for event in run['events']:
             x_index = event['x'] // INTERVAL
             if client == "ALL":
-                if event['config']['marker'] in events_set:
-                    marker_label = "_nolegend_"
-                elif client == "ALL":
-                    marker_label = event['config']['name']
-                    events_set.append(event['config']['marker'])
+                if event == run['events'][-1]:
+                    marker_label = "Initial sync completed" if run == config['runs'][-1] else "_nolegend_"
+                    ax.scatter(df.index[x_index], df.iloc[x_index][col], marker='*',
+                            color='crimson', s=100, label=marker_label, zorder=10)
             else:
                 marker_label = event['config']['name'] if run == config['runs'][-1] else "_nolegend_"
-            ax.scatter(df.index[x_index], df.iloc[x_index][col], marker=event['config']['marker'],
-                       color=event['config']['color'], s=event['config']['size'], label=marker_label, zorder=10)
+                ax.scatter(df.index[x_index], df.iloc[x_index][col], marker=event['config']['marker'],
+                        color=event['config']['color'], s=event['config']['size'], label=marker_label, zorder=10)
 
     plt.title(title)
     plt.ylabel(ylabel)
     plt.xlabel("Time (hours)")
     plt.grid('on', linestyle='--')
-    if client == "ALL":
-        handles, labels = plt.gca().get_legend_handles_labels()
-        order = [0, 5, 7, 1, 2, 3, 4, 6]
-        plt.legend([handles[i] for i in order], [labels[i] for i in order])
-    else:
-        plt.legend()
-    # plt.savefig(f"{client}_{col}.png")
-    plt.savefig(f"{col}.png")
+    plt.legend()
+    plt.savefig(f"{client}_{col}.png")
+    # plt.savefig(f"{col}.png")
     # plt.show()
 
 
@@ -79,7 +72,7 @@ sys_memory = psutil.virtual_memory().total
 df_list = list(map(lambda run_config: load_df(run_config), config['runs']))
 
 # Plots
-sns.set()   # TODO - keep?
+# sns.set()   # TODO - keep?
 plot_col_multidf(config, df_list, 'CPU', "CPU usage over time", "%", client)
 plot_col_multidf(config, df_list, 'MEM', "RAM usage over time", "GB", client)
 plot_col_multidf(config, df_list, 'Disk',

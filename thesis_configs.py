@@ -77,31 +77,31 @@ EVENT_CONFIGS = {
             'name': 'Snapshots',
             'marker': '$1$',
             'color': 'black',
-            'size': 50
+            'size': 100
         },
         '7': {
             'name': 'Execution',
             'marker': '$7$',
-            'color': 'black',
-            'size': 50
+            'color': 'indigo',
+            'size': 100
         },
         '8': {
             'name': 'HashState',
             'marker': '$8$',
-            'color': 'black',
-            'size': 50
+            'color': 'goldenrod',
+            'size': 100
         },
-        '9': {
-            'name': 'IntermediateHashes',
-            'marker': '$9$',
-            'color': 'black',
-            'size': 50
-        },
+        # '9': {
+        #     'name': 'IntermediateHashes',
+        #     'marker': '$9$',
+        #     'color': 'black',
+        #     'size': 50
+        # },
         '13': {
             'name': 'LogIndex',
             'marker': '$13$',
-            'color': 'black',
-            'size': 100
+            'color': 'crimson',
+            'size': 150
         }
     },
 }
@@ -226,13 +226,13 @@ CONFIGS = {
                 'time': '01-21 18:59:04',
                 'x': 30186,
             }, {
-                'config': EVENT_CONFIGS['Besu']['BlocksDownloaded'],
-                'time': '01-22 10:57:06',
-                'x': 87668,
-            }, {
                 'config': EVENT_CONFIGS['Besu']['StateHeal'],
                 'time': '01-21 20:06:45',
                 'x': 34247,
+            }, {
+                'config': EVENT_CONFIGS['Besu']['BlocksDownloaded'],
+                'time': '01-22 10:57:06',
+                'x': 87668,
             }]
         # }, {
         #     'name': 'Besu_3',
@@ -277,7 +277,7 @@ CONFIGS = {
     },
 }
 CONFIG_ALL = {
-    'time_ticks_step': 120,
+    'time_ticks_step': 60,
     'runs': [
         CONFIGS['Geth']['runs'][1],
         CONFIGS['Nethermind']['runs'][0],
