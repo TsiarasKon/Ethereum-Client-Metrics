@@ -45,6 +45,7 @@ def plot_col_multidf(config, df_list, col, title, ylabel, client):
     plt.xlabel("Time (hours)")
     plt.grid('on', linestyle='--')
     plt.legend()
+    # plt.legend(loc=4)
     plt.savefig(f"{client}_{col}.png")
     # plt.savefig(f"{col}.png")
     # plt.show()
@@ -72,16 +73,16 @@ sys_memory = psutil.virtual_memory().total
 df_list = list(map(lambda run_config: load_df(run_config), config['runs']))
 
 # Plots
-# sns.set()   # TODO - keep?
-plot_col_multidf(config, df_list, 'CPU', "CPU usage over time", "%", client)
-plot_col_multidf(config, df_list, 'MEM', "RAM usage over time", "GB", client)
+# sns.set()
+plot_col_multidf(config, df_list, 'CPU', "CPU usage over time", "CPU usage (%)", client)
+plot_col_multidf(config, df_list, 'MEM', "RAM usage over time", "RAM usage (GB)", client)
 plot_col_multidf(config, df_list, 'Disk',
-                 "Chain data disk size over time", "GB", client)
+                 "Chain data disk size over time", "Disk usage (GB)", client)
 plot_col_multidf(config, df_list, 'Reads',
-                 "Disk Reads over time", "MB per second", client)
+                 "Disk Reads over time", "Disk reads (MB/s)", client)
 plot_col_multidf(config, df_list, 'Writes',
-                 "Disk Writes over time", "MB per second", client)
+                 "Disk Writes over time", "Disk writes (MB/s)", client)
 plot_col_multidf(config, df_list, 'Sent',
-                 "Network - Sent data over time", "MB per second", client)
+                 "Network - Sent data over time", "Sent data (MB/s)", client)
 plot_col_multidf(config, df_list, 'Received',
-                 "Network - Received data over time", "MB per second", client)
+                 "Network - Received data over time", "Received data (MB/s)", client)
