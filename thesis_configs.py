@@ -157,7 +157,7 @@ CONFIGS = {
         'runs': [{
             'name': 'Nethermind_1',
             'filename': 'p_metrics_23_01_nethermind_snap_128_4096.csv',
-            'trim_rows': 10800,
+            'trim_rows': 12800,
             'events': [{
                 'config': EVENT_CONFIGS['Nethermind']['HeaderSync'],
                 'time': '14:49:36',
@@ -199,51 +199,41 @@ CONFIGS = {
         }]
     },
     'Besu': {
-        'time_ticks_step': 90,
+        'time_ticks_step': 120,
         'runs': [{
             'name': 'Besu_1',
-            'filename': 'p_metrics_18_01_besu.csv',
-            'trim_rows': 8000,
-            'events': [{
-                'config': EVENT_CONFIGS['Besu']['StateSync'],
-                'time': '01-18 07:59:27',
-                'x': 27465,
-            }, {
-                'config': EVENT_CONFIGS['Besu']['BlocksDownloaded'],
-                'time': '01-19 07:58:25',
-                'x': 113803,
-            }, {
-                'config': EVENT_CONFIGS['Besu']['StateHeal'],
-                'time': '01-19 08:01:13',
-                'x': 113971,
-            }]
-        }, {
-            'name': 'Besu_2',
-            'filename': 'p_metrics_21_01_besu_checkpoint.csv',
+            'filename': 'p_metrics_08_02_besu_snap_bonsai_128.csv',
             'trim_rows': None,
             'events': [{
                 'config': EVENT_CONFIGS['Besu']['StateSync'],
-                'time': '01-21 18:59:04',
-                'x': 30186,
-            }, {
-                'config': EVENT_CONFIGS['Besu']['StateHeal'],
-                'time': '01-21 20:06:45',
-                'x': 34247,
+                'time': '02-08 10:53:06',
+                'x': 37411,
             }, {
                 'config': EVENT_CONFIGS['Besu']['BlocksDownloaded'],
-                'time': '01-22 10:57:06',
-                'x': 87668,
+                'time': '02-09 05:20:36',
+                'x': 103861,
+            }, {
+                'config': EVENT_CONFIGS['Besu']['StateHeal'],
+                'time': '02-09 05:21:16',
+                'x': 103901,
             }]
-        # }, {
-        #     'name': 'Besu_3',
-        #     'filename': 'p_metrics_29_01_besu_snap_noBonsai.csv',
-        #     'trim_rows': 2500,
-        #     'events': []
-        # }, {
-        #     'name': 'Besu_4',
-        #     'filename': 'p_metrics_25_01_besu_noBonsai.csv',
-        #     'trim_rows': 65000,
-        #     'events': []
+        }, {
+            'name': 'Besu_2',
+            'filename': 'p_metrics_14_02_besu_checkpoint_bonsai_128.csv',
+            'trim_rows': 20000,
+            'events': [{
+                'config': EVENT_CONFIGS['Besu']['StateSync'],
+                'time': '02-15 02:11:22',
+                'x': 38537,
+            }, {
+                'config': EVENT_CONFIGS['Besu']['BlocksDownloaded'],
+                'time': '02-15 08:59:00',
+                'x': 62995,
+            }, {
+                'config': EVENT_CONFIGS['Besu']['StateHeal'],
+                'time': '01-21 08:59:32',
+                'x': 63027,
+            }]
         }]
     },
     'Erigon': {
@@ -277,7 +267,7 @@ CONFIGS = {
     },
 }
 CONFIG_ALL = {
-    'time_ticks_step': 60,
+    'time_ticks_step': 120,
     'runs': [
         CONFIGS['Geth']['runs'][1],
         CONFIGS['Nethermind']['runs'][0],
