@@ -144,11 +144,11 @@ CONFIGS = {
             }, {
                 'config': EVENT_CONFIGS['Geth']['StateSync'],
                 'time': '20:08:24',
-                'x': 69923,
+                'x': 70073,
             }, {
                 'config': EVENT_CONFIGS['Geth']['StateHeal'],
                 'time': '20:26:35',
-                'x': 71014,
+                'x': 71114,
             }]
         }]
     },
@@ -199,7 +199,7 @@ CONFIGS = {
         }]
     },
     'Besu': {
-        'time_ticks_step': 120,
+        'time_ticks_step': 90,
         'runs': [{
             'name': 'Besu_1',
             'filename': 'p_metrics_08_02_besu_snap_bonsai_128.csv',
@@ -265,9 +265,18 @@ CONFIGS = {
             }]
         }]
     },
+    'Nimbus': {
+        'time_ticks_step': 30,
+        'runs': [{
+            'name': 'Nimbus',
+            'filename': 'p_metrics_20_02_nimbus.csv',
+            'trim_rows': 75600,
+            'events': []
+        }]
+    },
 }
 CONFIG_ALL = {
-    'time_ticks_step': 120,
+    'time_ticks_step': 60,
     'runs': [
         CONFIGS['Geth']['runs'][1],
         CONFIGS['Nethermind']['runs'][0],
