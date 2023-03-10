@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import seaborn as sns
+import os
 
 
 def convert_bytes(bytes, output_unit, input_unit='b'):
@@ -19,12 +20,12 @@ def convert_bytes(bytes, output_unit, input_unit='b'):
     return bytes / float(1 << divisor)
 
 
-start_date = '2022-01-01'
+start_date = '2023-01-01'
 sys_memory = psutil.virtual_memory().total
 
 if len(sys.argv) < 2:
     print(
-        "Please run like './process-results-csv.py <results.csv> [start-date]'")
+        "Please run like './process_results_csv.py <results.csv> [start-date]'")
     sys.exit()
 
 filename = sys.argv[1]
@@ -68,4 +69,4 @@ df = df.reindex(date_range).ffill()
 df.reset_index(inplace=True, names=['Datetime'])
 
 print(df)
-df.to_csv("p_" + filename.split('\\')[-1], index=False)
+df.to_csv("p_" + filename.split(os.sep)[-1], index=False)
