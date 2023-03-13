@@ -45,8 +45,8 @@ def plot_col_multidf(config, df_list, col, title, ylabel, client):
     plt.xlabel("Time (hours)")
     plt.grid('on', linestyle='--')
     plt.legend()
-    # plt.legend(loc=4)
-    # plt.savefig(f"{client}_{col}.png")
+    # plt.legend(loc=8)
+    plt.savefig(f"{client}_{col}.png")
     # plt.savefig(f"{col}.png")
     plt.show()
 

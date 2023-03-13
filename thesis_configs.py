@@ -111,6 +111,7 @@ CONFIGS = {
         'runs': [{
             'name': 'Geth_1',
             'filename': 'p_metrics_24_01_geth_128_def.csv',
+            'logs': 'p_awkd_24_01_geth.log',
             'trim_rows': 7500,
             'events': [{
                 'config': EVENT_CONFIGS['Geth']['HeaderSync'],
@@ -132,6 +133,7 @@ CONFIGS = {
         }, {
             'name': 'Geth_2',
             'filename': 'p_metrics_20_01_geth_128_16384.csv',
+            'logs': 'p_awkd_20_01_geth.log',
             'trim_rows': 33000,
             'events': [{
                 'config': EVENT_CONFIGS['Geth']['HeaderSync'],
@@ -157,6 +159,7 @@ CONFIGS = {
         'runs': [{
             'name': 'Nethermind_1',
             'filename': 'p_metrics_23_01_nethermind_snap_128_4096.csv',
+            'logs': 'p_awkd_23_01_nethermind.log',
             'trim_rows': 12800,
             'events': [{
                 'config': EVENT_CONFIGS['Nethermind']['HeaderSync'],
@@ -178,6 +181,7 @@ CONFIGS = {
         }, {
             'name': 'Nethermind_2',
             'filename': 'p_metrics_28_01_nethermind_fast_128_4096.csv',
+            'logs': 'p_awkd_28_01_nethermind.log',
             'trim_rows': 7200,
             'events': [{
                 'config': EVENT_CONFIGS['Nethermind']['HeaderSync'],
@@ -203,6 +207,7 @@ CONFIGS = {
         'runs': [{
             'name': 'Besu_1',
             'filename': 'p_metrics_08_02_besu_snap_bonsai_128.csv',
+            'logs': 'p_awkd_08_02_besu.log',
             'trim_rows': None,
             'events': [{
                 'config': EVENT_CONFIGS['Besu']['StateSync'],
@@ -220,6 +225,7 @@ CONFIGS = {
         }, {
             'name': 'Besu_2',
             'filename': 'p_metrics_14_02_besu_checkpoint_bonsai_128.csv',
+            'logs': 'p_awkd_14_02_besu.log',
             'trim_rows': 20000,
             'events': [{
                 'config': EVENT_CONFIGS['Besu']['StateSync'],
@@ -241,6 +247,7 @@ CONFIGS = {
         'runs': [{
             'name': 'Erigon',
             'filename': 'p_metrics_30_01_erigon.csv',
+            'logs': 'p_awkd_30_01_erigon.log',
             'trim_rows': 10800,
             'events': [{
                 'config': EVENT_CONFIGS['Erigon']['1'],
@@ -270,6 +277,7 @@ CONFIGS = {
         'runs': [{
             'name': 'Nimbus',
             'filename': 'p_metrics_20_02_nimbus.csv',
+            'logs': 'p_awkd_20_02_nimbus.log',
             'trim_rows': 75600,
             'events': []
         }]

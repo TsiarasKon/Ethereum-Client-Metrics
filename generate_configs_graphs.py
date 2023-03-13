@@ -77,7 +77,7 @@ df_list = list(map(lambda run_config: load_df(run_config), config['runs']))
 plot_col_multidf(config, df_list, 'CPU', "CPU usage over time", "CPU usage (%)", client)
 plot_col_multidf(config, df_list, 'MEM', "RAM usage over time", "RAM usage (GB)", client)
 plot_col_multidf(config, df_list, 'Disk',
-                 "Chain data disk size over time", "Disk usage (GB)", client)
+                 "Client data disk size over time", "Disk usage (GB)", client)
 plot_col_multidf(config, df_list, 'Reads',
                  "Disk Reads over time", "Disk reads (MB/s)", client)
 plot_col_multidf(config, df_list, 'Writes',
